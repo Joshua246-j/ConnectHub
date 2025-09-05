@@ -10,11 +10,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-f^gwe_f+wfwzk8w+(ayu7e2x4bb_=h(4fwy)+fx2-8ne!+ii-2'
 
-# Turn off debug for production (important)
+# ✅ Turn off debug for production
 DEBUG = False
 
-# ✅ Add your PythonAnywhere domain here
-ALLOWED_HOSTS = ['joshuajomon.pythonanywhere.com']  # Replace with your username
+# ✅ Your PythonAnywhere domain
+ALLOWED_HOSTS = ['joshuajomon.pythonanywhere.com']
 
 # Application definition
 INSTALLED_APPS = [
@@ -25,8 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
-    #'tailwind',
-    #'theme',
+    # 'tailwind',  # disabled for production
+    # 'theme',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +58,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ConnectHub.wsgi.application'
 
-# Database (still using SQLite for free plan)
+# Database (SQLite for free plan)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -80,10 +80,15 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files
+# ✅ Static files
 STATIC_URL = '/static/'
 
-# ✅ Add this for deployment
+# 👇 Add this so Django knows where to look for extra static files
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# ✅ Where collectstatic will put the files
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Media files
@@ -95,8 +100,5 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "feed"
 LOGOUT_REDIRECT_URL = "login"
 
-# Tailwind settings
-TAILWIND_APP_NAME = 'theme'
-
-# ✅ Optional: helpful for free plan to avoid broken static files cache
+# ✅ Avoid CSRF issues on PythonAnywhere
 CSRF_TRUSTED_ORIGINS = ['https://joshuajomon.pythonanywhere.com']
