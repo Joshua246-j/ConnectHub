@@ -1,0 +1,158 @@
+{% extends "core/base.html" %} 
+{% block content %}
+
+<div class="max-w-4xl mx-auto p-6 space-y-10">
+
+  <!-- 👤 Profile Header -->
+  <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-lg p-8 flex flex-col items-center space-y-6">
+
+    <!-- Profile Picture -->
+    <div class="relative">
+      {% if profile.profile_pic %}
+      <img
+        src="{{ profile.profile_pic.url }}"
+        id="profilePic"
+        class="w-36 h-36 rounded-full object-cover border-4 border-blue-500 shadow-lg cursor-pointer hover:scale-105 transition-transform duration-300"
+        alt="{{ profile.user.username }} Profile Picture"
+      />
+      {% else %}
+      <div
+        class="w-36 h-36 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center text-4xl font-bold text-gray-700 dark:text-gray-200 border-4 border-blue-500 shadow-lg"
+      >
+        {{ profile.user.username|first|upper }}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Username & Bio -->
+    <div class="text-center">
+      <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+        {{ profile.user.username }}
+      </h2>
+      <p class="text-gray-600 dark:text-gray-300 text-base max-w-md mx-auto mt-2 leading-relaxed">
+        {{ profile.bio|default:"No bio yet." }}
+      </p>
+    </div>
+
+    <!-- Profile Stats -->
+    <div class="flex justify-center gap-10 mt-4">
+      <div class="flex flex-col items-center">
+        <span class="text-2xl font-bold text-gray-900 dark:text-white">
+          {{ profile.friends.count }}
+        </span>
+        <span class="text-gray-500 dark:text-gray-400 text-sm">Friends</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <span class="text-2xl font-bold text-gray-900 dark:text-white">
+          {{ profile.gender|default:"N/A" }}
+        </span>
+        <span class="text-gray-500 dark:text-gray-400 text-sm">Gender</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <span class="text-2xl font-bold text-gray-900 dark:text-white">
+          {% if profile.age %}{{ profile.age }}{% else %}N/A{% endif %}
+        </span>
+        <span class="text-gray-500 dark:text-gray-400 text-sm">Age</span>
+      </div>
+    </div>
+
+    <!-- Edit Profile (only for own profile) -->
+    {% if request.user == profile.user %}
+    <div class="mt-4">
+      <a
+        href="{% url 'edit_profile' %}"
+        class="px-6 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md transition"
+      >
+        ✏️ Edit Profile
+      </a>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- 📝 Posts Section -->
+  <div>
+    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+      Posts
+    </h3>
+
+    {% if posts %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      {% for post in posts %}
+        {% if post.media.all %}
+        <!-- Post with media -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-xl transition overflow-hidden group">
+          {% for media in post.media.all %}
+            {% if media.is_video %}
+            <video controls class="w-full h-64 object-cover mb-2 rounded-t-2xl">
+              <source src="{{ media.file.url }}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            {% else %}
+            <img src="{{ media.file.url }}" class="w-full h-64 object-cover mb-2 rounded-t-2xl"/>
+            {% endif %}
+          {% endfor %}
+
+          <div class="p-4">
+            {% if post.caption %}
+            <p class="text-gray-800 dark:text-gray-100 text-base mb-2 break-words">
+              {{ post.caption }}
+            </p>
+            {% endif %}
+            <p class="text-gray-500 dark:text-gray-400 text-xs">
+              ❤️ Likes: {{ post.total_likes }}
+            </p>
+          </div>
+        </div>
+        {% else %}
+        <!-- Post with only caption (compact card) -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-md transition p-4 text-center border border-gray-200 dark:border-gray-700 max-h-40 overflow-hidden flex flex-col justify-between">
+          <p class="text-gray-800 dark:text-gray-100 text-sm break-words mb-2">
+            {{ post.caption }}
+          </p>
+          <p class="text-gray-500 dark:text-gray-400 text-xs mt-auto">
+            ❤️ Likes: {{ post.total_likes }}
+          </p>
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-500 dark:text-gray-400 text-center py-10 text-lg font-medium">
+      No posts yet.
+    </p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Profile Pic Modal -->
+<div
+  id="profilePicModal"
+  class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50 cursor-pointer"
+>
+  <img
+    id="profilePicModalImg"
+    class="max-h-[90%] max-w-[90%] rounded-xl shadow-xl"
+    src=""
+    alt="Profile Picture"
+  />
+</div>
+
+<script>
+  const profilePic = document.getElementById("profilePic");
+  const modal = document.getElementById("profilePicModal");
+  const modalImg = document.getElementById("profilePicModalImg");
+
+  if (profilePic) {
+    profilePic.addEventListener("click", () => {
+      modalImg.src = profilePic.src;
+      modal.classList.remove("hidden");
+    });
+  }
+
+  modal.addEventListener("click", () => {
+    modal.classList.add("hidden");
+    modalImg.src = "";
+  });
+</script>
+
+{% endblock %}
