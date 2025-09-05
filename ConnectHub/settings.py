@@ -25,8 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
-    'tailwind',
-    'theme',
+    #'tailwind',
+    #'theme',
 ]
 
 MIDDLEWARE = [
