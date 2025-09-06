@@ -8,7 +8,7 @@
   </h2>
 
   <!-- Search Form -->
-  <form method="GET" class="flex items-center space-x-3 mt-4">
+  <form method="GET" class="flex flex-col sm:flex-row items-center sm:space-x-3 space-y-3 sm:space-y-0 mt-4">
     <input
       type="text"
       name="q"
@@ -18,7 +18,7 @@
     />
     <button
       type="submit"
-      class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-2 rounded-xl shadow-md transition"
+      class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-2 rounded-xl shadow-md transition w-full sm:w-auto"
     >
       Search
     </button>
@@ -28,10 +28,10 @@
   {% if results %}
   <ul class="space-y-4 mt-6">
     {% for profile in results %}
-    <li class="flex justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-2xl shadow hover:shadow-lg transition">
-
+    <li class="flex flex-col sm:flex-row justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-2xl shadow hover:shadow-lg transition">
+      
       <!-- 👤 User Info -->
-      <a href="{% url 'profile' profile.user.id %}" class="flex items-center space-x-4">
+      <a href="{% url 'profile' profile.user.id %}" class="flex items-center space-x-4 mb-3 sm:mb-0 w-full sm:w-auto">
         {% if profile.profile_pic %}
         <img src="{{ profile.profile_pic.url }}" alt="{{ profile.user.username }}" class="w-12 h-12 rounded-full object-cover ring-2 ring-blue-400"/>
         {% else %}
@@ -47,16 +47,16 @@
         </div>
       </a>
 
-      <!-- ➕ Add Friend / Friends Button Logic -->
+      <!-- ➕ Add Friend / Friends Button -->
       {% if profile.user != request.user %}
         {% if profile.user in request.user.profile.friends.all %}
-          <button class="px-4 py-2 rounded-xl bg-gray-400 text-white font-medium shadow-md cursor-not-allowed" disabled>
+          <button class="px-4 py-2 rounded-xl bg-gray-400 text-white font-medium shadow-md cursor-not-allowed">
             Friends
           </button>
         {% else %}
-          <form method="POST" action="{% url 'send_friend_request' profile.id %}">
+          <form method="POST" action="{% url 'send_friend_request' profile.id %}" class="w-full sm:w-auto">
             {% csrf_token %}
-            <button type="submit" class="px-4 py-2 rounded-xl bg-green-500 hover:bg-green-600 text-white font-medium shadow-md transition text-sm">
+            <button type="submit" class="px-4 py-2 rounded-xl bg-green-500 hover:bg-green-600 text-white font-medium shadow-md transition text-sm w-full sm:w-auto">
               Add Friend
             </button>
           </form>

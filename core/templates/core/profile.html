@@ -67,7 +67,7 @@
           ✏️ Edit Profile
         </a>
       {% else %}
-        <!-- Add Friend / Friends (for others) -->
+        <!-- Add Friend / Friends Button (only for non-friends) -->
         {% if profile.user in request.user.profile.friends.all %}
           <button
             class="px-6 py-2 rounded-full bg-gray-400 text-white font-semibold shadow-md cursor-not-allowed"
