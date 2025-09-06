@@ -1,35 +1,32 @@
-{% extends "core/base.html" %} {% load static %} {% block content %}
-
-<div class="flex flex-col md:flex-row justify-center gap-6 px-2 md:px-0">
+{% extends "core/base.html" %}
+{% load static %}
+{% block content %}
+<div class="flex justify-center gap-6 px-4 md:px-0">
   <!-- 📰 Center Feed -->
   <div class="flex-1 max-w-2xl space-y-6">
     <!-- 📸 Stories Carousel -->
-    <div
-      class="relative bg-white dark:bg-gray-800 rounded-3xl shadow-md p-3 md:p-4"
-    >
+    <div class="relative bg-white dark:bg-gray-800 rounded-3xl shadow-md p-4">
       <div id="storiesWrapper" class="relative">
         <div
           id="storiesContainer"
-          class="flex items-center space-x-4 md:space-x-6 overflow-x-auto scrollbar-hide scroll-smooth px-1 md:px-2 py-2"
+          class="flex items-center space-x-6 overflow-x-auto scrollbar-hide scroll-smooth px-2 py-2"
         >
           <!-- Add Your Story -->
           <form
             method="POST"
             enctype="multipart/form-data"
             action="{% url 'add_story' %}"
-            class="flex flex-col items-center space-y-1 md:space-y-2 flex-shrink-0"
+            class="flex flex-col items-center space-y-2 flex-shrink-0"
           >
             {% csrf_token %}
             <label for="storyInput" class="cursor-pointer">
               <div
-                class="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center border-4 border-blue-400 rounded-full text-3xl font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                class="w-20 h-20 flex items-center justify-center border-4 border-blue-400 rounded-full text-3xl font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition"
               >
                 +
               </div>
             </label>
-            <p class="text-[10px] md:text-xs text-gray-600 dark:text-gray-300">
-              Add Story
-            </p>
+            <p class="text-xs text-gray-600 dark:text-gray-300">Add Story</p>
             <input
               type="file"
               id="storyInput"
@@ -43,24 +40,25 @@
           <!-- Existing Stories -->
           {% for story in stories %}
           <div
-            class="relative flex flex-col items-center space-y-1 md:space-y-2 flex-shrink-0"
+            class="relative flex flex-col items-center space-y-2 flex-shrink-0"
           >
             {% if story.image %}
             <img
               src="{{ story.image.url }}"
-              class="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-blue-400 object-cover story-thumb cursor-pointer transition hover:scale-105"
+              class="w-20 h-20 rounded-full border-4 border-blue-400 object-cover story-thumb cursor-pointer transition hover:scale-105"
               data-story="{{ story.image.url }}"
+              alt="Story"
               onclick="openStoryModal(this)"
             />
             {% else %}
             <div
-              class="w-16 h-16 md:w-20 md:h-20 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center text-xl font-semibold text-gray-700 dark:text-gray-300"
+              class="w-20 h-20 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center text-xl font-semibold text-gray-700 dark:text-gray-300"
             >
               {{ story.user.user.username|first|upper }}
             </div>
             {% endif %}
             <p
-              class="text-[10px] md:text-xs truncate w-16 md:w-20 text-center text-gray-700 dark:text-gray-300"
+              class="text-xs truncate w-20 text-center text-gray-700 dark:text-gray-300"
             >
               {{ story.user.user.username }}
             </p>
@@ -83,16 +81,16 @@
           {% endfor %}
         </div>
 
-        <!-- Scroll Buttons (hidden on mobile) -->
+        <!-- Scroll Buttons -->
         <button
           id="scrollLeft"
-          class="hidden md:flex absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-100 dark:bg-gray-700 p-3 rounded-full shadow-md hover:scale-105 transition z-20"
+          class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-100 dark:bg-gray-700 p-3 rounded-full shadow-md hover:scale-105 transition z-20 hidden"
         >
           <i data-feather="chevron-left"></i>
         </button>
         <button
           id="scrollRight"
-          class="hidden md:flex absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-100 dark:bg-gray-700 p-3 rounded-full shadow-md hover:scale-105 transition z-20"
+          class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-100 dark:bg-gray-700 p-3 rounded-full shadow-md hover:scale-105 transition z-20 hidden"
         >
           <i data-feather="chevron-right"></i>
         </button>
@@ -103,7 +101,7 @@
     <div class="space-y-6">
       {% for post in posts %}
       <div
-        class="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-3 md:p-4 relative hover:shadow-lg transition"
+        class="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-4 relative hover:shadow-lg transition"
       >
         {% if request.user == post.user.user %}
         <form
@@ -112,9 +110,7 @@
           class="absolute top-2 right-2"
         >
           {% csrf_token %}
-          <button
-            class="text-xs md:text-sm text-red-500 hover:text-red-600 font-bold"
-          >
+          <button class="text-sm text-red-500 hover:text-red-600 font-bold">
             Delete
           </button>
         </form>
@@ -123,24 +119,21 @@
         <!-- Post Header -->
         <div class="flex items-center space-x-3 mb-3">
           {% if post.user.profile_pic %}
-          <a href="{% url 'profile' post.user.id %}">
-            <img
+          <a href="{% url 'profile' post.user.id %}"
+            ><img
               src="{{ post.user.profile_pic.url }}"
-              class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover"
-            />
-          </a>
+              class="w-10 h-10 rounded-full object-cover"
+          /></a>
           {% else %}
           <a href="{% url 'profile' post.user.id %}">
             <div
-              class="w-8 h-8 md:w-10 md:h-10 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300 font-medium"
+              class="w-10 h-10 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300 font-medium"
             >
               {{ post.user.user.username|first|upper }}
             </div>
           </a>
           {% endif %}
-          <p
-            class="font-semibold text-gray-800 dark:text-gray-100 text-sm md:text-base"
-          >
+          <p class="font-semibold text-gray-800 dark:text-gray-100">
             <a href="{% url 'profile' post.user.id %}" class="hover:underline"
               >{{ post.user.user.username }}</a
             >
@@ -153,6 +146,7 @@
           {% if media.is_video %}
           <video controls class="w-full rounded-lg">
             <source src="{{ media.file.url }}" type="video/mp4" />
+            Your browser does not support the video tag.
           </video>
           {% else %}
           <img
@@ -178,21 +172,22 @@
           </button>
         </form>
 
-        <!-- Caption -->
+        <!-- Caption (no username) -->
         {% if post.caption %}
-        <p
-          class="text-gray-700 dark:text-gray-300 text-sm break-words line-clamp-5"
-        >
-          {{ post.caption|escape }}
-        </p>
-        {% if post.caption|length > 300 %}
-        <button
-          class="text-blue-500 dark:text-blue-400 text-xs mt-1 hover:underline"
-          onclick="this.previousElementSibling.classList.toggle('line-clamp-5'); this.textContent = this.textContent === 'Read more' ? 'Show less' : 'Read more';"
-        >
-          Read more
-        </button>
-        {% endif %} {% endif %}
+        <div class="relative">
+          <p class="text-gray-700 dark:text-gray-300 text-sm break-words line-clamp-5">
+            {{ post.caption|escape }}
+          </p>
+          {% if post.caption|length > 300 %}
+          <button
+            class="text-blue-500 dark:text-blue-400 text-xs mt-1 hover:underline"
+            onclick="this.previousElementSibling.classList.toggle('line-clamp-5'); this.textContent = this.textContent === 'Read more' ? 'Show less' : 'Read more';"
+          >
+            Read more
+          </button>
+          {% endif %}
+        </div>
+        {% endif %}
       </div>
       {% empty %}
       <p class="text-gray-500 dark:text-gray-400 text-sm text-center mt-4">
@@ -202,44 +197,152 @@
     </div>
   </div>
 
-  <!-- 📝 Right Side (hidden on mobile) -->
-  <div class="hidden md:block w-80 flex-shrink-0 sticky top-6 h-fit space-y-6">
+  <!-- 📝 Right Side: Modern Create Post -->
+  <div class="w-80 flex-shrink-0 sticky top-6 h-fit space-y-6">
     <div
       class="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-4 flex flex-col space-y-3"
     >
-      {% include "core/create_post_form.html" %}
+      <h3
+        class="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2"
+      >
+        Create Post
+      </h3>
+
+      <form
+        method="POST"
+        enctype="multipart/form-data"
+        action="{% url 'feed' %}"
+      >
+        {% csrf_token %}
+        <textarea
+          name="caption"
+          rows="3"
+          placeholder="What's on your mind?"
+          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none text-sm transition dark:bg-gray-700 dark:text-gray-100"
+        ></textarea>
+
+        <div class="flex justify-between mt-2 space-x-2">
+          <!-- Image Icon -->
+          <label
+            class="flex-1 flex items-center justify-center px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-full cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition"
+          >
+            <i data-feather="image" class="mr-2"></i> Photo
+            <input
+              type="file"
+              name="media"
+              multiple
+              accept="image/*"
+              class="hidden"
+              id="imageInput"
+            />
+          </label>
+
+          <!-- Video Icon -->
+          <label
+            class="flex-1 flex items-center justify-center px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-full cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition"
+          >
+            <i data-feather="video" class="mr-2"></i> Video
+            <input
+              type="file"
+              name="media"
+              multiple
+              accept="video/*"
+              class="hidden"
+              id="videoInput"
+            />
+          </label>
+        </div>
+
+        <span
+          id="mediaSelected"
+          class="text-xs text-gray-500 dark:text-gray-400 hidden mt-1"
+        ></span>
+
+        <button
+          type="submit"
+          name="submit_post"
+          class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-full shadow-md transition mt-2 flex items-center justify-center space-x-2"
+        >
+          <i data-feather="send"></i>
+          <span>Post</span>
+        </button>
+      </form>
     </div>
   </div>
 </div>
 
-<!-- ✅ Mobile Create Post Button -->
-<div class="fixed bottom-16 right-4 md:hidden">
-  <button
-    onclick="document.getElementById('mobilePostModal').classList.remove('hidden')"
-    class="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg"
-  >
-    <i data-feather="plus"></i>
-  </button>
-</div>
-
-<!-- Mobile Post Modal -->
+<!-- Story Modal -->
 <div
-  id="mobilePostModal"
-  class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
+  id="storyModal"
+  class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50"
 >
-  <div class="bg-white dark:bg-gray-800 p-4 rounded-xl w-11/12 max-w-md">
-    <h3 class="text-lg font-semibold mb-2 text-center">Create Post</h3>
-    {% include "core/create_post_form.html" %}
-    <button
-      onclick="document.getElementById('mobilePostModal').classList.add('hidden')"
-      class="mt-3 w-full text-center text-red-500 hover:underline"
-    >
-      Cancel
-    </button>
-  </div>
+  <img
+    id="storyModalImg"
+    class="max-h-[90%] max-w-[90%] rounded-lg"
+    src=""
+    alt="Story"
+  />
 </div>
 
 <script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Stories scroll buttons
+  const storiesContainer = document.getElementById("storiesContainer");
+  const scrollLeft = document.getElementById("scrollLeft");
+  const scrollRight = document.getElementById("scrollRight");
+
+  const updateButtons = () => {
+    scrollLeft.classList.toggle("hidden", storiesContainer.scrollLeft <= 0);
+    scrollRight.classList.toggle(
+      "hidden",
+      storiesContainer.scrollLeft >=
+        storiesContainer.scrollWidth - storiesContainer.clientWidth - 10
+    );
+  };
+
+  scrollLeft.addEventListener("click", () => {
+    storiesContainer.scrollBy({ left: -200, behavior: "smooth" });
+    setTimeout(updateButtons, 300);
+  });
+  scrollRight.addEventListener("click", () => {
+    storiesContainer.scrollBy({ left: 200, behavior: "smooth" });
+    setTimeout(updateButtons, 300);
+  });
+  updateButtons();
+  storiesContainer.addEventListener("scroll", updateButtons);
+
+  // Media selection
+  const mediaInput = document.getElementById("imageInput");
+  const videoInput = document.getElementById("videoInput");
+  const mediaSelected = document.getElementById("mediaSelected");
+
+  function updateSelected() {
+    let totalFiles =
+      (mediaInput.files.length || 0) + (videoInput.files.length || 0);
+    if (totalFiles) {
+      mediaSelected.textContent = "📁 " + totalFiles + " file(s) selected";
+      mediaSelected.classList.remove("hidden");
+    } else {
+      mediaSelected.classList.add("hidden");
+    }
+  }
+
+  mediaInput.addEventListener("change", updateSelected);
+  videoInput.addEventListener("change", updateSelected);
+
+  // Story modal popup
+  window.openStoryModal = function (el) {
+    const modal = document.getElementById("storyModal");
+    const modalImg = document.getElementById("storyModalImg");
+    modalImg.src = el.dataset.story;
+    modal.classList.remove("hidden");
+  };
+
+  document.getElementById("storyModal").addEventListener("click", () => {
+    document.getElementById("storyModal").classList.add("hidden");
+  });
+
   feather.replace();
+});
 </script>
 {% endblock %}
