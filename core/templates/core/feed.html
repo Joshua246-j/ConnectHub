@@ -7,10 +7,7 @@
     <!-- 📸 Stories Carousel -->
     <div class="relative bg-white dark:bg-gray-800 rounded-3xl shadow-md p-4">
       <div id="storiesWrapper" class="relative">
-        <div
-          id="storiesContainer"
-          class="flex items-center space-x-6 overflow-x-auto scrollbar-hide scroll-smooth px-2 py-2"
-        >
+        <div id="storiesContainer" class="flex items-center space-x-4 overflow-x-auto scrollbar-hide scroll-smooth px-2 py-2">
           <!-- Add Your Story -->
           <form method="POST" enctype="multipart/form-data" action="{% url 'add_story' %}" class="flex flex-col items-center space-y-2 flex-shrink-0">
             {% csrf_token %}
@@ -40,14 +37,6 @@
           </div>
           {% endfor %}
         </div>
-
-        <!-- Scroll Buttons -->
-        <button id="scrollLeft" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-100 dark:bg-gray-700 p-3 rounded-full shadow-md hover:scale-105 transition z-20 hidden">
-          <i data-feather="chevron-left"></i>
-        </button>
-        <button id="scrollRight" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-100 dark:bg-gray-700 p-3 rounded-full shadow-md hover:scale-105 transition z-20 hidden">
-          <i data-feather="chevron-right"></i>
-        </button>
       </div>
     </div>
 
@@ -107,34 +96,59 @@
     </div>
   </div>
 
-  <!-- 📝 Right Side: Modern Create Post -->
-  <div class="w-full md:w-80 flex-shrink-0 mt-6 md:mt-0">
+  <!-- 📝 Right Side: Desktop Create Post -->
+  <div class="hidden md:block w-80 flex-shrink-0 mt-6 md:mt-0">
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-4 flex flex-col space-y-3">
       <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">Create Post</h3>
-
       <form method="POST" enctype="multipart/form-data" action="{% url 'feed' %}">
         {% csrf_token %}
         <textarea name="caption" rows="3" placeholder="What's on your mind?" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none text-sm transition dark:bg-gray-700 dark:text-gray-100"></textarea>
-
         <div class="flex flex-col md:flex-row justify-between mt-2 space-y-2 md:space-y-0 md:space-x-2">
           <label class="flex-1 flex items-center justify-center px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-full cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition">
             <i data-feather="image" class="mr-2"></i> Photo
-            <input type="file" name="media" multiple accept="image/*" class="hidden" id="imageInput" />
+            <input type="file" name="media" multiple accept="image/*" class="hidden" />
           </label>
-
           <label class="flex-1 flex items-center justify-center px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-full cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition">
             <i data-feather="video" class="mr-2"></i> Video
-            <input type="file" name="media" multiple accept="video/*" class="hidden" id="videoInput" />
+            <input type="file" name="media" multiple accept="video/*" class="hidden" />
           </label>
         </div>
-
         <span id="mediaSelected" class="text-xs text-gray-500 dark:text-gray-400 hidden mt-1"></span>
-
         <button type="submit" name="submit_post" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-full shadow-md transition mt-2 flex items-center justify-center space-x-2">
           <i data-feather="send"></i><span>Post</span>
         </button>
       </form>
     </div>
+  </div>
+</div>
+
+<!-- Mobile Floating Create Post -->
+<button id="mobileCreateBtn" class="md:hidden fixed bottom-6 right-6 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600 z-50 flex items-center justify-center transition">
+  <i data-feather="plus" class="w-6 h-6"></i>
+</button>
+
+<!-- Mobile Create Post Modal -->
+<div id="mobileCreateModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50 p-4">
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md w-full max-w-md p-4 relative">
+    <button id="closeMobileCreate" class="absolute top-2 right-2 text-gray-700 dark:text-gray-300 font-bold text-xl">&times;</button>
+    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">Create Post</h3>
+    <form method="POST" enctype="multipart/form-data" action="{% url 'feed' %}">
+      {% csrf_token %}
+      <textarea name="caption" rows="3" placeholder="What's on your mind?" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none text-sm transition dark:bg-gray-700 dark:text-gray-100"></textarea>
+      <div class="flex flex-col mt-2 space-y-2">
+        <label class="flex-1 flex items-center justify-center px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-full cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition">
+          <i data-feather="image" class="mr-2"></i> Photo
+          <input type="file" name="media" multiple accept="image/*" class="hidden" />
+        </label>
+        <label class="flex-1 flex items-center justify-center px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-full cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition">
+          <i data-feather="video" class="mr-2"></i> Video
+          <input type="file" name="media" multiple accept="video/*" class="hidden" />
+        </label>
+      </div>
+      <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-full shadow-md mt-2 flex items-center justify-center space-x-2">
+        <i data-feather="send"></i><span>Post</span>
+      </button>
+    </form>
   </div>
 </div>
 
@@ -146,42 +160,43 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const storiesContainer = document.getElementById("storiesContainer");
-  const scrollLeft = document.getElementById("scrollLeft");
-  const scrollRight = document.getElementById("scrollRight");
+  storiesContainer.addEventListener("touchstart", e => startX = e.touches[0].pageX);
+  storiesContainer.addEventListener("touchmove", e => e.preventDefault());
 
   const updateButtons = () => {
+    const scrollLeft = document.getElementById("scrollLeft");
+    const scrollRight = document.getElementById("scrollRight");
     scrollLeft.classList.toggle("hidden", storiesContainer.scrollLeft <= 0);
     scrollRight.classList.toggle("hidden", storiesContainer.scrollLeft >= storiesContainer.scrollWidth - storiesContainer.clientWidth - 10);
   };
 
-  scrollLeft.addEventListener("click", () => { storiesContainer.scrollBy({ left: -200, behavior: "smooth" }); setTimeout(updateButtons, 300); });
-  scrollRight.addEventListener("click", () => { storiesContainer.scrollBy({ left: 200, behavior: "smooth" }); setTimeout(updateButtons, 300); });
+  document.getElementById("scrollLeft").addEventListener("click", () => { storiesContainer.scrollBy({ left: -200, behavior: "smooth" }); setTimeout(updateButtons, 300); });
+  document.getElementById("scrollRight").addEventListener("click", () => { storiesContainer.scrollBy({ left: 200, behavior: "smooth" }); setTimeout(updateButtons, 300); });
   updateButtons();
   storiesContainer.addEventListener("scroll", updateButtons);
 
+  // Media file count
   const mediaInput = document.getElementById("imageInput");
   const videoInput = document.getElementById("videoInput");
   const mediaSelected = document.getElementById("mediaSelected");
-
   function updateSelected() {
-    let totalFiles = (mediaInput.files.length || 0) + (videoInput.files.length || 0);
-    if (totalFiles) {
-      mediaSelected.textContent = "📁 " + totalFiles + " file(s) selected";
-      mediaSelected.classList.remove("hidden");
-    } else { mediaSelected.classList.add("hidden"); }
+    let totalFiles = (mediaInput?.files.length || 0) + (videoInput?.files.length || 0);
+    if (totalFiles) { mediaSelected?.classList.remove("hidden"); mediaSelected.textContent = "📁 " + totalFiles + " file(s) selected"; } 
+    else { mediaSelected?.classList.add("hidden"); }
   }
+  mediaInput?.addEventListener("change", updateSelected);
+  videoInput?.addEventListener("change", updateSelected);
 
-  mediaInput.addEventListener("change", updateSelected);
-  videoInput.addEventListener("change", updateSelected);
-
-  window.openStoryModal = function(el) {
-    const modal = document.getElementById("storyModal");
-    const modalImg = document.getElementById("storyModalImg");
-    modalImg.src = el.dataset.story;
-    modal.classList.remove("hidden");
-  };
-
+  // Story modal
+  window.openStoryModal = function(el) { document.getElementById("storyModal").classList.remove("hidden"); document.getElementById("storyModalImg").src = el.dataset.story; };
   document.getElementById("storyModal").addEventListener("click", () => { document.getElementById("storyModal").classList.add("hidden"); });
+
+  // Mobile Create Post modal
+  const mobileBtn = document.getElementById("mobileCreateBtn");
+  const mobileModal = document.getElementById("mobileCreateModal");
+  const closeMobile = document.getElementById("closeMobileCreate");
+  mobileBtn.addEventListener("click", () => mobileModal.classList.remove("hidden"));
+  closeMobile.addEventListener("click", () => mobileModal.classList.add("hidden"));
 
   feather.replace();
 });
