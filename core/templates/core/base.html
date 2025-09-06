@@ -35,7 +35,7 @@
   <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex min-h-screen transition-colors duration-300">
 
     <!-- 🌐 Sidebar -->
-    <aside id="sidebar" class="bg-white dark:bg-gray-800 w-64 flex flex-col justify-between shadow dark:shadow-gray-700 fixed top-0 left-0 h-screen border-r border-gray-200 dark:border-gray-700 transition-transform duration-300 transform -translate-x-full md:translate-x-0 md:flex z-50">
+    <aside id="sidebar" class="bg-white dark:bg-gray-800 w-64 flex flex-col justify-between shadow dark:shadow-gray-700 fixed top-0 left-0 h-screen border-r border-gray-200 dark:border-gray-700 transition-transform duration-300 transform -translate-x-full md:translate-x-0 md:flex z-70">
       <div class="px-6 py-6 space-y-10">
         <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
           Connect Hub
@@ -86,8 +86,11 @@
       {% endif %}
     </aside>
 
+    <!-- Mobile Overlay -->
+    <div id="mobileOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-60"></div>
+
     <!-- Hamburger Toggle for Mobile -->
-    <button id="sidebarToggle" class="md:hidden fixed top-4 left-4 z-60 bg-blue-600 text-white p-2 rounded-md shadow">
+    <button id="sidebarToggle" class="md:hidden fixed top-4 left-4 z-70 bg-blue-600 text-white p-2 rounded-md shadow">
       <i data-feather="menu" class="w-5 h-5"></i>
     </button>
 
@@ -103,6 +106,7 @@
       const iconSpan = document.getElementById('darkModeIcon');
       const sidebar = document.getElementById('sidebar');
       const sidebarToggle = document.getElementById('sidebarToggle');
+      const overlay = document.getElementById('mobileOverlay');
 
       function updateIcon() {
         iconSpan.innerHTML = document.documentElement.classList.contains('dark')
@@ -120,11 +124,15 @@
       // Mobile Sidebar Toggle
       sidebarToggle.addEventListener('click', () => {
         sidebar.classList.toggle('-translate-x-full');
-        if (!sidebar.classList.contains('-translate-x-full')) {
-          sidebar.style.zIndex = '70'; // bring above feed
-        } else {
-          sidebar.style.zIndex = '50';
-        }
+        overlay.classList.toggle('hidden');
+        overlay.classList.toggle('block');
+      });
+
+      // Click overlay to close sidebar
+      overlay.addEventListener('click', () => {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+        overlay.classList.remove('block');
       });
 
       updateIcon();
