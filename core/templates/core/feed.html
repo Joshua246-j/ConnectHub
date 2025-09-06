@@ -10,27 +10,29 @@
     <!-- 📸 Stories Carousel -->
     <div class="relative bg-white dark:bg-gray-800 rounded-3xl shadow-md p-4">
       <div id="storiesWrapper" class="relative">
+
+        <!-- Stories Container -->
         <div id="storiesContainer" class="flex flex-nowrap items-center space-x-2 md:space-x-4 overflow-x-auto scrollbar-hide scroll-smooth px-2 py-2 snap-x snap-mandatory">
 
           <!-- Add Your Story -->
-          <form method="POST" enctype="multipart/form-data" action="{% url 'add_story' %}" class="flex flex-col items-center space-y-1 flex-shrink-0 w-16 md:w-20 snap-start">
+          <form method="POST" enctype="multipart/form-data" action="{% url 'add_story' %}" class="flex flex-col items-center space-y-1 flex-shrink-0 w-1/3 sm:w-16 md:w-20 snap-start">
             {% csrf_token %}
             <label for="storyInput" class="cursor-pointer">
-              <div class="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center border-4 border-blue-400 rounded-full text-2xl md:text-3xl font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition">+</div>
+              <div class="w-16 h-16 sm:w-16 sm:h-16 md:w-20 md:h-20 flex items-center justify-center border-4 border-blue-400 rounded-full text-2xl md:text-3xl font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition">+</div>
             </label>
-            <p class="text-xs text-gray-600 dark:text-gray-300 truncate w-16 text-center">Add Story</p>
+            <p class="text-xs text-gray-600 dark:text-gray-300 truncate w-16 sm:w-16 md:w-20 text-center">Add Story</p>
             <input type="file" id="storyInput" name="image" accept="image/*" class="hidden" onchange="this.form.submit()" />
           </form>
 
           <!-- Existing Stories -->
           {% for story in stories %}
-          <div class="relative flex flex-col items-center space-y-1 flex-shrink-0 w-16 md:w-20 snap-start">
+          <div class="relative flex flex-col items-center space-y-1 flex-shrink-0 w-1/3 sm:w-16 md:w-20 snap-start">
             {% if story.image %}
-            <img src="{{ story.image.url }}" class="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-blue-400 object-cover cursor-pointer hover:scale-105 transition" data-story="{{ story.image.url }}" alt="Story" onclick="openStoryModal(this)" />
+            <img src="{{ story.image.url }}" class="w-16 h-16 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full border-4 border-blue-400 object-cover cursor-pointer hover:scale-105 transition" data-story="{{ story.image.url }}" alt="Story" onclick="openStoryModal(this)" />
             {% else %}
-            <div class="w-16 h-16 md:w-20 md:h-20 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300 font-semibold">{{ story.user.user.username|first|upper }}</div>
+            <div class="w-16 h-16 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300 font-semibold">{{ story.user.user.username|first|upper }}</div>
             {% endif %}
-            <p class="text-xs truncate w-16 md:w-20 text-center text-gray-700 dark:text-gray-300">{{ story.user.user.username }}</p>
+            <p class="text-xs truncate w-16 sm:w-16 md:w-20 text-center text-gray-700 dark:text-gray-300">{{ story.user.user.username }}</p>
 
             {% if request.user == story.user.user %}
             <form method="POST" action="{% url 'delete_story' story.id %}" class="absolute -top-1 -right-1 z-10">
