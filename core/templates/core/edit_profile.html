@@ -75,15 +75,7 @@
   <!-- 🖊️ Form -->
   <form method="post" enctype="multipart/form-data" class="space-y-5">
     {% csrf_token %}
-
-    <!-- Hide Default File Input -->
-    <input
-      type="file"
-      id="id_profile_pic"
-      name="profile_pic"
-      accept="image/*"
-      class="hidden"
-    />
+    <input type="file" id="id_profile_pic" name="profile_pic" accept="image/*" class="hidden" />
 
     {% for field in form %}
       {% if field.name != "profile_pic" %}
@@ -104,7 +96,6 @@
       {% endif %}
     {% endfor %}
 
-    <!-- Submit Button -->
     <button
       type="submit"
       class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow-md transition duration-200"
@@ -114,14 +105,8 @@
   </form>
 </div>
 
-<!-- ✅ GLOBAL STYLE FIX FOR DARK MODE -->
 <style>
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="number"],
-  textarea,
-  select {
+  input[type="text"], input[type="email"], input[type="password"], input[type="number"], textarea, select {
     width: 100%;
     padding: 0.75rem;
     border-radius: 0.75rem;
@@ -131,26 +116,14 @@
     outline: none;
     transition: all 0.2s ease-in-out;
   }
-  html.dark input[type="text"],
-  html.dark input[type="email"],
-  html.dark input[type="password"],
-  html.dark input[type="number"],
-  html.dark textarea,
-  html.dark select {
+  html.dark input[type="text"], html.dark input[type="email"], html.dark input[type="password"], html.dark input[type="number"], html.dark textarea, html.dark select {
     background-color: #374151 !important;
     color: #f9fafb !important;
     border-color: #4b5563 !important;
   }
-  html.dark input::placeholder,
-  html.dark textarea::placeholder {
-    color: #9ca3af !important;
-  }
-  input[type="radio"] {
-    accent-color: #2563eb;
-  }
-  html.dark input[type="radio"] {
-    accent-color: #3b82f6;
-  }
+  html.dark input::placeholder, html.dark textarea::placeholder { color: #9ca3af !important; }
+  input[type="radio"] { accent-color: #2563eb; }
+  html.dark input[type="radio"] { accent-color: #3b82f6; }
 </style>
 
 <script>
