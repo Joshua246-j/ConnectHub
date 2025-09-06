@@ -187,6 +187,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Feather icons
   feather.replace();
+
+  // Desktop: Show selected file names
+  const imageInput = document.getElementById("imageInput");
+  const videoInput = document.getElementById("videoInput");
+  const mediaSelected = document.getElementById("mediaSelected");
+
+  function updateMediaSelected() {
+    let files = [];
+    if(imageInput.files.length) files = [...files, ...Array.from(imageInput.files).map(f => f.name)];
+    if(videoInput.files.length) files = [...files, ...Array.from(videoInput.files).map(f => f.name)];
+    if(files.length) {
+      mediaSelected.textContent = files.join(', ');
+      mediaSelected.classList.remove('hidden');
+    } else {
+      mediaSelected.textContent = '';
+      mediaSelected.classList.add('hidden');
+    }
+  }
+
+  imageInput.addEventListener("change", updateMediaSelected);
+  videoInput.addEventListener("change", updateMediaSelected);
 });
 </script>
 
