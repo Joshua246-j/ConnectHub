@@ -162,7 +162,9 @@ def profile_view(request, user_id):
 
 @login_required
 def edit_profile_view(request):
-    profile = request.user.profile
+    # Ensure profile exists (important to avoid 500)
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
     if request.method == "POST":
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
@@ -174,7 +176,8 @@ def edit_profile_view(request):
             return redirect("profile", user_id=request.user.id)
     else:
         form = ProfileForm(instance=profile)
-    return render(request, "core/edit_profile.html", {"form": form})
+
+    return render(request, "core/edit_profile.html", {"form": form, "user": request.user})
 
 
 @login_required

@@ -1,4 +1,6 @@
-{% extends "core/base.html" %} {% block content %}
+{% load static %}
+{% extends "core/base.html" %}
+{% block content %}
 
 <div
   class="max-w-lg mx-auto bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg space-y-8 mt-8"
@@ -6,7 +8,7 @@
   <!-- 🖼 Profile Picture Preview -->
   <div class="flex flex-col items-center space-y-3">
     <div class="relative">
-      {% if user.profile.profile_pic %}
+      {% if user.profile and user.profile.profile_pic %}
       <img
         id="profilePreview"
         src="{{ user.profile.profile_pic.url }}"
@@ -58,10 +60,13 @@
     class="bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 p-4 rounded-xl text-sm"
   >
     <ul class="list-disc list-inside space-y-1">
-      {% for field in form %} {% for error in field.errors %}
-      <li><strong>{{ field.label }}:</strong> {{ error }}</li>
-      {% endfor %} {% endfor %} {% for error in form.non_field_errors %}
-      <li>{{ error }}</li>
+      {% for field in form %}
+        {% for error in field.errors %}
+          <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
       {% endfor %}
     </ul>
   </div>
@@ -80,21 +85,24 @@
       class="hidden"
     />
 
-    {% for field in form %} {% if field.name != "profile_pic" %}
-    <div class="space-y-1">
-      <label
-        for="{{ field.id_for_label }}"
-        class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-      >
-        {{ field.label }}
-      </label>
-      {{ field }} {% if field.help_text %}
-      <p class="text-xs text-gray-500 dark:text-gray-400">
-        {{ field.help_text }}
-      </p>
+    {% for field in form %}
+      {% if field.name != "profile_pic" %}
+      <div class="space-y-1">
+        <label
+          for="{{ field.id_for_label }}"
+          class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
+          {{ field.label }}
+        </label>
+        {{ field }}
+        {% if field.help_text %}
+        <p class="text-xs text-gray-500 dark:text-gray-400">
+          {{ field.help_text }}
+        </p>
+        {% endif %}
+      </div>
       {% endif %}
-    </div>
-    {% endif %} {% endfor %}
+    {% endfor %}
 
     <!-- Submit Button -->
     <button
@@ -146,18 +154,21 @@
 </style>
 
 <script>
-  document
-    .getElementById("id_profile_pic")
-    .addEventListener("change", function (event) {
+  const profileInput = document.getElementById("id_profile_pic");
+  const profilePreview = document.getElementById("profilePreview");
+
+  if (profileInput) {
+    profileInput.addEventListener("change", function (event) {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
-          document.getElementById("profilePreview").src = e.target.result;
+          profilePreview.src = e.target.result;
         };
         reader.readAsDataURL(file);
       }
     });
+  }
 </script>
 
 {% endblock %}
