@@ -69,6 +69,9 @@ def logout_view(request):
 def feed_view(request):
     user_profile = get_object_or_404(Profile, user=request.user)
 
+    # Friend request count for notification badge
+    pending_count = FriendRequest.objects.filter(receiver=user_profile).count()
+
     if request.method == "POST" and "submit_post" in request.POST:
         caption = request.POST.get("caption", "")
         files = request.FILES.getlist("media")
@@ -94,7 +97,11 @@ def feed_view(request):
 
     posts = Post.objects.all().order_by("-timestamp")
     stories = Story.objects.filter(is_active=True).order_by("-timestamp")
-    return render(request, "core/feed.html", {"posts": posts, "stories": stories})
+    return render(request, "core/feed.html", {
+        "posts": posts,
+        "stories": stories,
+        "pending_count": pending_count
+    })
 
 
 @login_required
@@ -157,12 +164,19 @@ def toggle_like(request, post_id):
 def profile_view(request, user_id):
     profile = get_object_or_404(Profile, user__id=user_id)
     posts = Post.objects.filter(user=profile).order_by("-timestamp")
-    return render(request, "core/profile.html", {"profile": profile, "posts": posts})
+
+    # Pending friend requests for sidebar
+    pending_count = FriendRequest.objects.filter(receiver=request.user.profile).count()
+
+    return render(request, "core/profile.html", {
+        "profile": profile,
+        "posts": posts,
+        "pending_count": pending_count
+    })
 
 
 @login_required
 def edit_profile_view(request):
-    # Ensure profile exists (important to avoid 500)
     profile, created = Profile.objects.get_or_create(user=request.user)
 
     if request.method == "POST":
@@ -177,7 +191,14 @@ def edit_profile_view(request):
     else:
         form = ProfileForm(instance=profile)
 
-    return render(request, "core/edit_profile.html", {"form": form, "user": request.user})
+    # Pending friend requests for sidebar
+    pending_count = FriendRequest.objects.filter(receiver=request.user.profile).count()
+
+    return render(request, "core/edit_profile.html", {
+        "form": form,
+        "user": request.user,
+        "pending_count": pending_count
+    })
 
 
 @login_required
@@ -226,7 +247,14 @@ def delete_story(request, story_id):
 @login_required
 def friends_view(request):
     friends = request.user.profile.friends.all()
-    return render(request, "core/friends.html", {"friends": friends})
+
+    # Pending friend requests for sidebar
+    pending_count = FriendRequest.objects.filter(receiver=request.user.profile).count()
+
+    return render(request, "core/friends.html", {
+        "friends": friends,
+        "pending_count": pending_count
+    })
 
 
 @login_required
@@ -237,12 +265,23 @@ def search_users(request):
         results = Profile.objects.filter(
             Q(user__username__icontains=query) | Q(bio__icontains=query)
         ).exclude(id=request.user.profile.id)
-    return render(request, "core/search.html", {"query": query, "results": results})
+
+    # Pending friend requests for sidebar
+    pending_count = FriendRequest.objects.filter(receiver=request.user.profile).count()
+
+    return render(request, "core/search.html", {
+        "query": query,
+        "results": results,
+        "pending_count": pending_count
+    })
 
 
+@login_required
 def notifications_view(request):
-    if request.user.is_authenticated:
-        friend_requests = FriendRequest.objects.filter(receiver=request.user.profile)
-    else:
-        friend_requests = []
-    return render(request, "core/notifications.html", {"friend_requests": friend_requests})
+    user_profile = request.user.profile
+    friend_requests = FriendRequest.objects.filter(receiver=user_profile)
+    pending_count = friend_requests.count()
+    return render(request, "core/notifications.html", {
+        "friend_requests": friend_requests,
+        "pending_count": pending_count
+    })

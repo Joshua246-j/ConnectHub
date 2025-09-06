@@ -13,7 +13,7 @@
         <div id="storiesContainer" class="flex items-center space-x-4 overflow-x-auto scrollbar-hide scroll-smooth px-2 py-2">
           
           <!-- Add Your Story -->
-          <form method="POST" enctype="multipart/form-data" action="{% url 'add_story' %}" class="flex flex-col items-center space-y-2 flex-shrink-0">
+          <form method="POST" enctype="multipart/form-data" action="{% url 'add_story' %}" class="flex flex-col items-center space-y-2 flex-shrink-0 w-20">
             {% csrf_token %}
             <label for="storyInput" class="cursor-pointer">
               <div class="w-20 h-20 flex items-center justify-center border-4 border-blue-400 rounded-full text-3xl font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition">+</div>
@@ -24,7 +24,7 @@
 
           <!-- Existing Stories -->
           {% for story in stories %}
-          <div class="relative flex flex-col items-center space-y-2 flex-shrink-0">
+          <div class="relative flex flex-col items-center space-y-2 flex-shrink-0 w-20">
             {% if story.image %}
             <img src="{{ story.image.url }}" class="w-20 h-20 rounded-full border-4 border-blue-400 object-cover story-thumb cursor-pointer transition hover:scale-105" data-story="{{ story.image.url }}" alt="Story" onclick="openStoryModal(this)" />
             {% else %}
@@ -168,8 +168,13 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   // Story modal
-  window.openStoryModal = function(el) { document.getElementById("storyModal").classList.remove("hidden"); document.getElementById("storyModalImg").src = el.dataset.story; };
-  document.getElementById("storyModal").addEventListener("click", () => { document.getElementById("storyModal").classList.add("hidden"); });
+  window.openStoryModal = function(el) { 
+    document.getElementById("storyModal").classList.remove("hidden"); 
+    document.getElementById("storyModalImg").src = el.dataset.story; 
+  };
+  document.getElementById("storyModal").addEventListener("click", () => { 
+    document.getElementById("storyModal").classList.add("hidden"); 
+  });
 
   // Mobile Create Post modal
   const mobileBtn = document.getElementById("mobileCreateBtn");
