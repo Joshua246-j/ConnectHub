@@ -10,28 +10,28 @@
     <!-- 📸 Stories Carousel -->
     <div class="relative bg-white dark:bg-gray-800 rounded-3xl shadow-md p-4">
       <div id="storiesWrapper" class="relative">
-        <div id="storiesContainer" class="flex items-center space-x-4 overflow-x-auto scrollbar-hide scroll-smooth px-2 py-2">
-          
+        <div id="storiesContainer" class="flex flex-nowrap items-center space-x-2 md:space-x-4 overflow-x-auto scrollbar-hide scroll-smooth px-2 py-2 snap-x snap-mandatory">
+
           <!-- Add Your Story -->
-          <form method="POST" enctype="multipart/form-data" action="{% url 'add_story' %}" class="flex flex-col items-center space-y-2 flex-shrink-0 w-20">
+          <form method="POST" enctype="multipart/form-data" action="{% url 'add_story' %}" class="flex flex-col items-center space-y-1 flex-shrink-0 w-16 md:w-20 snap-start">
             {% csrf_token %}
             <label for="storyInput" class="cursor-pointer">
-              <div class="w-20 h-20 flex items-center justify-center border-4 border-blue-400 rounded-full text-3xl font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition">+</div>
+              <div class="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center border-4 border-blue-400 rounded-full text-2xl md:text-3xl font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition">+</div>
             </label>
-            <p class="text-xs text-gray-600 dark:text-gray-300">Add Story</p>
+            <p class="text-xs text-gray-600 dark:text-gray-300 truncate w-16 text-center">Add Story</p>
             <input type="file" id="storyInput" name="image" accept="image/*" class="hidden" onchange="this.form.submit()" />
           </form>
 
           <!-- Existing Stories -->
           {% for story in stories %}
-          <div class="relative flex flex-col items-center space-y-2 flex-shrink-0 w-20">
+          <div class="relative flex flex-col items-center space-y-1 flex-shrink-0 w-16 md:w-20 snap-start">
             {% if story.image %}
-            <img src="{{ story.image.url }}" class="w-20 h-20 rounded-full border-4 border-blue-400 object-cover story-thumb cursor-pointer transition hover:scale-105" data-story="{{ story.image.url }}" alt="Story" onclick="openStoryModal(this)" />
+            <img src="{{ story.image.url }}" class="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 border-blue-400 object-cover cursor-pointer hover:scale-105 transition" data-story="{{ story.image.url }}" alt="Story" onclick="openStoryModal(this)" />
             {% else %}
-            <div class="w-20 h-20 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center text-xl font-semibold text-gray-700 dark:text-gray-300">{{ story.user.user.username|first|upper }}</div>
+            <div class="w-16 h-16 md:w-20 md:h-20 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300 font-semibold">{{ story.user.user.username|first|upper }}</div>
             {% endif %}
-            <p class="text-xs truncate w-20 text-center text-gray-700 dark:text-gray-300">{{ story.user.user.username }}</p>
-            
+            <p class="text-xs truncate w-16 md:w-20 text-center text-gray-700 dark:text-gray-300">{{ story.user.user.username }}</p>
+
             {% if request.user == story.user.user %}
             <form method="POST" action="{% url 'delete_story' story.id %}" class="absolute -top-1 -right-1 z-10">
               {% csrf_token %}
@@ -71,11 +71,11 @@
         {% for media in post.media.all %}
         <div class="mb-3 rounded-lg overflow-hidden">
           {% if media.is_video %}
-          <video controls class="w-full rounded-lg">
+          <video controls class="w-full rounded-lg max-h-[500px] md:max-h-none">
             <source src="{{ media.file.url }}" type="video/mp4" />Your browser does not support the video tag.
           </video>
           {% else %}
-          <img src="{{ media.file.url }}" class="w-full object-cover rounded-lg"/>
+          <img src="{{ media.file.url }}" class="w-full object-cover rounded-lg max-h-[500px] md:max-h-none"/>
           {% endif %}
         </div>
         {% endfor %}
@@ -131,12 +131,12 @@
 </div>
 
 <!-- Mobile Floating Create Post -->
-<button id="mobileCreateBtn" class="md:hidden fixed bottom-6 right-6 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600 z-50 flex items-center justify-center transition">
+<button id="mobileCreateBtn" class="md:hidden fixed bottom-6 right-6 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600 z-[9999] flex items-center justify-center transition">
   <i data-feather="plus" class="w-6 h-6"></i>
 </button>
 
 <!-- Mobile Create Post Modal -->
-<div id="mobileCreateModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-start justify-center hidden z-50 p-4 pt-16">
+<div id="mobileCreateModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-start justify-center hidden z-[9999] p-4 pt-16">
   <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md w-full max-w-md p-4 relative">
     <button id="closeMobileCreate" class="absolute top-2 right-2 text-gray-700 dark:text-gray-300 font-bold text-xl">&times;</button>
     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">Create Post</h3>
@@ -146,11 +146,11 @@
       <div class="flex flex-col mt-2 space-y-2">
         <label class="flex-1 flex items-center justify-center px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-full cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition">
           <i data-feather="image" class="mr-2"></i> Photo
-          <input type="file" id="imageInputMobile" name="media" multiple accept="image/*" class="hidden" />
+          <input type="file" id="imageInputMobile" name="media[]" multiple accept="image/*" class="hidden" />
         </label>
         <label class="flex-1 flex items-center justify-center px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-full cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition">
           <i data-feather="video" class="mr-2"></i> Video
-          <input type="file" id="videoInputMobile" name="media" multiple accept="video/*" class="hidden" />
+          <input type="file" id="videoInputMobile" name="media[]" multiple accept="video/*" class="hidden" />
         </label>
       </div>
       <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-full shadow-md mt-2 flex items-center justify-center space-x-2">
@@ -161,7 +161,7 @@
 </div>
 
 <!-- Story Modal -->
-<div id="storyModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50">
+<div id="storyModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-[9999]">
   <img id="storyModalImg" class="max-h-[90%] max-w-[90%] rounded-lg" src="" alt="Story"/>
 </div>
 
