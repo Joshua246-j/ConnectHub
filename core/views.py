@@ -2,6 +2,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import UserRegisterForm, PostForm, StoryForm, ProfileForm
 from .models import Profile, FriendRequest, Post, Story, PostMedia
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
@@ -15,6 +16,11 @@ def register_view(request):
     if request.method == "POST":
         form = UserRegisterForm(request.POST, request.FILES)
         if form.is_valid():
+            email = form.cleaned_data.get("email")
+            if User.objects.filter(email=email).exists():
+                messages.error(request, "This email is already registered. Try logging in or use a different email.")
+                return render(request, "core/register.html", {"form": form})
+
             user = form.save(commit=False)
             user.set_password(form.cleaned_data["password"])
             user.save()
@@ -63,7 +69,6 @@ def logout_view(request):
 def feed_view(request):
     user_profile = get_object_or_404(Profile, user=request.user)
 
-    # Handle new post creation
     if request.method == "POST" and "submit_post" in request.POST:
         caption = request.POST.get("caption", "")
         files = request.FILES.getlist("media")
@@ -73,7 +78,6 @@ def feed_view(request):
                 is_video = f.name.lower().endswith(('.mp4', '.mov', '.avi', '.mkv'))
                 PostMedia.objects.create(post=post, file=f, is_video=is_video)
 
-            # AJAX response
             if request.headers.get("x-requested-with") == "XMLHttpRequest":
                 return JsonResponse({
                     "status": "success",
@@ -90,13 +94,9 @@ def feed_view(request):
 
     posts = Post.objects.all().order_by("-timestamp")
     stories = Story.objects.filter(is_active=True).order_by("-timestamp")
-
     return render(request, "core/feed.html", {"posts": posts, "stories": stories})
 
 
-# -------------------------------
-# Friend Requests
-# -------------------------------
 @login_required
 def send_friend_request(request, profile_id):
     sender = request.user.profile
@@ -136,9 +136,6 @@ def unfriend(request, profile_id):
     return redirect("friends")
 
 
-# -------------------------------
-# Likes (AJAX ready)
-# -------------------------------
 @login_required
 def toggle_like(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -156,9 +153,6 @@ def toggle_like(request, post_id):
     return redirect("feed")
 
 
-# -------------------------------
-# Profile
-# -------------------------------
 @login_required
 def profile_view(request, user_id):
     profile = get_object_or_404(Profile, user__id=user_id)
@@ -183,9 +177,6 @@ def edit_profile_view(request):
     return render(request, "core/edit_profile.html", {"form": form})
 
 
-# -------------------------------
-# Stories (AJAX ready)
-# -------------------------------
 @login_required
 def add_story_view(request):
     if request.method == "POST":
@@ -205,9 +196,6 @@ def add_story_view(request):
     return redirect("feed")
 
 
-# -------------------------------
-# Delete Post / Story (AJAX ready)
-# -------------------------------
 @login_required
 def delete_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -232,9 +220,6 @@ def delete_story(request, story_id):
     return redirect("feed")
 
 
-# -------------------------------
-# Friends / Search
-# -------------------------------
 @login_required
 def friends_view(request):
     friends = request.user.profile.friends.all()
@@ -252,9 +237,6 @@ def search_users(request):
     return render(request, "core/search.html", {"query": query, "results": results})
 
 
-# -------------------------------
-# Notifications
-# -------------------------------
 def notifications_view(request):
     if request.user.is_authenticated:
         friend_requests = FriendRequest.objects.filter(receiver=request.user.profile)
