@@ -1,27 +1,50 @@
-{% extends "core/base.html" %}
-{% block content %}
+{% extends "core/base.html" %} {% block content %}
 
-<div class="max-w-lg mx-auto bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg space-y-8 mt-8">
-
+<div
+  class="max-w-lg mx-auto bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg space-y-8 mt-8"
+>
   <!-- 🖼 Profile Picture Preview -->
   <div class="flex flex-col items-center space-y-3">
     <div class="relative">
-      <img 
-        id="profilePreview" 
-        src="{{ user.profile.profile_pic.url|default:'/static/images/default-avatar.png' }}" 
+      {% if user.profile.profile_pic %}
+      <img
+        id="profilePreview"
+        src="{{ user.profile.profile_pic.url }}"
         class="w-28 h-28 rounded-full object-cover border-4 border-gray-200 dark:border-gray-700 shadow-md"
         alt="Profile Picture"
+      />
+      {% else %}
+      <img
+        id="profilePreview"
+        src="{% static 'images/default-avatar.png' %}"
+        class="w-28 h-28 rounded-full object-cover border-4 border-gray-200 dark:border-gray-700 shadow-md"
+        alt="Default Profile Picture"
+      />
+      {% endif %}
+      <label
+        for="id_profile_pic"
+        class="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 shadow cursor-pointer transition"
       >
-      <label for="id_profile_pic" 
-        class="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 shadow cursor-pointer transition">
         <!-- Camera Icon -->
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-          d="M15.232 5.232l3.536 3.536M9 13h3l8-8-3-3-8 8v3zM3 21h18"/>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15.232 5.232l3.536 3.536M9 13h3l8-8-3-3-8 8v3zM3 21h18"
+          />
         </svg>
       </label>
     </div>
-    <p class="text-sm text-gray-500 dark:text-gray-400">Tap icon to change your profile picture</p>
+    <p class="text-sm text-gray-500 dark:text-gray-400">
+      Tap icon to change your profile picture
+    </p>
   </div>
 
   <!-- 📝 Page Title -->
@@ -31,15 +54,14 @@
 
   <!-- ⚠️ Error Messages -->
   {% if form.errors %}
-  <div class="bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 p-4 rounded-xl text-sm">
+  <div
+    class="bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 p-4 rounded-xl text-sm"
+  >
     <ul class="list-disc list-inside space-y-1">
-      {% for field in form %}
-        {% for error in field.errors %}
-          <li><strong>{{ field.label }}:</strong> {{ error }}</li>
-        {% endfor %}
-      {% endfor %}
-      {% for error in form.non_field_errors %}
-        <li>{{ error }}</li>
+      {% for field in form %} {% for error in field.errors %}
+      <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+      {% endfor %} {% endfor %} {% for error in form.non_field_errors %}
+      <li>{{ error }}</li>
       {% endfor %}
     </ul>
   </div>
@@ -50,26 +72,35 @@
     {% csrf_token %}
 
     <!-- Hide Default File Input -->
-    <input type="file" id="id_profile_pic" name="profile_pic" accept="image/*" class="hidden">
+    <input
+      type="file"
+      id="id_profile_pic"
+      name="profile_pic"
+      accept="image/*"
+      class="hidden"
+    />
 
-    {% for field in form %}
-      {% if field.name != "profile_pic" %}
-      <div class="space-y-1">
-        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          {{ field.label }}
-        </label>
-        {{ field }}
-        {% if field.help_text %}
-          <p class="text-xs text-gray-500 dark:text-gray-400">{{ field.help_text }}</p>
-        {% endif %}
-      </div>
+    {% for field in form %} {% if field.name != "profile_pic" %}
+    <div class="space-y-1">
+      <label
+        for="{{ field.id_for_label }}"
+        class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+      >
+        {{ field.label }}
+      </label>
+      {{ field }} {% if field.help_text %}
+      <p class="text-xs text-gray-500 dark:text-gray-400">
+        {{ field.help_text }}
+      </p>
       {% endif %}
-    {% endfor %}
+    </div>
+    {% endif %} {% endfor %}
 
     <!-- Submit Button -->
-    <button 
-      type="submit" 
-      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow-md transition duration-200">
+    <button
+      type="submit"
+      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow-md transition duration-200"
+    >
       💾 Save Changes
     </button>
   </form>
@@ -77,7 +108,6 @@
 
 <!-- ✅ GLOBAL STYLE FIX FOR DARK MODE -->
 <style>
-  /* Ensure all inputs/textareas/selects are readable in dark mode */
   input[type="text"],
   input[type="email"],
   input[type="password"],
@@ -93,46 +123,41 @@
     outline: none;
     transition: all 0.2s ease-in-out;
   }
-
-  /* Dark Mode Override */
   html.dark input[type="text"],
   html.dark input[type="email"],
   html.dark input[type="password"],
   html.dark input[type="number"],
   html.dark textarea,
   html.dark select {
-    background-color: #374151 !important; /* dark:bg-gray-700 */
-    color: #f9fafb !important; /* text-gray-100 */
-    border-color: #4b5563 !important; /* dark:border-gray-600 */
+    background-color: #374151 !important;
+    color: #f9fafb !important;
+    border-color: #4b5563 !important;
   }
-
-  /* Fix placeholder color for dark mode */
   html.dark input::placeholder,
   html.dark textarea::placeholder {
-    color: #9ca3af !important; /* gray-400 */
+    color: #9ca3af !important;
   }
-
-  /* Fix for radio buttons (gender) */
   input[type="radio"] {
-    accent-color: #2563eb; /* blue-600 */
+    accent-color: #2563eb;
   }
   html.dark input[type="radio"] {
-    accent-color: #3b82f6; /* lighter blue for dark mode */
+    accent-color: #3b82f6;
   }
 </style>
 
-<!-- JS: Live Preview for Profile Picture -->
 <script>
-  document.getElementById("id_profile_pic").addEventListener("change", function (event) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        document.getElementById("profilePreview").src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-  });
+  document
+    .getElementById("id_profile_pic")
+    .addEventListener("change", function (event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById("profilePreview").src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
 </script>
 
 {% endblock %}
