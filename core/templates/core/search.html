@@ -1,78 +1,51 @@
-{% extends "core/base.html" %} 
+{% extends "core/base.html" %}
 {% block content %}
 
 <div class="max-w-3xl mx-auto mt-8 space-y-6">
-  <!-- 🔍 Page Title -->
-  <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 text-center">
-    Search Users
-  </h2>
 
-  <!-- Search Form -->
-  <form method="GET" class="flex flex-col sm:flex-row items-center sm:space-x-3 space-y-3 sm:space-y-0 mt-4">
-    <input
-      type="text"
-      name="q"
-      placeholder="Search by username..."
-      value="{{ query }}"
-      class="flex-1 p-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
-    />
-    <button
-      type="submit"
-      class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-2 rounded-xl shadow-md transition w-full sm:w-auto"
-    >
-      Search
-    </button>
+  <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 text-center">Search Users</h2>
+
+  <form method="GET" class="flex items-center space-x-3 mt-4">
+    <input type="text" name="q" placeholder="Search by username..." value="{{ query }}" class="flex-1 p-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"/>
+    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-2 rounded-xl shadow-md transition">Search</button>
   </form>
 
-  <!-- Results Section -->
   {% if results %}
-  <ul class="space-y-4 mt-6">
-    {% for profile in results %}
-    <li class="flex flex-col sm:flex-row justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-2xl shadow hover:shadow-lg transition">
-      
-      <!-- 👤 User Info -->
-      <a href="{% url 'profile' profile.user.id %}" class="flex items-center space-x-4 mb-3 sm:mb-0 w-full sm:w-auto">
-        {% if profile.profile_pic %}
-        <img src="{{ profile.profile_pic.url }}" alt="{{ profile.user.username }}" class="w-12 h-12 rounded-full object-cover ring-2 ring-blue-400"/>
-        {% else %}
-        <div class="w-12 h-12 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300 font-bold text-lg ring-2 ring-blue-400">
-          {{ profile.user.username|first|upper }}
-        </div>
-        {% endif %}
-        <div>
-          <p class="font-semibold text-gray-800 dark:text-gray-100 text-lg">{{ profile.user.username }}</p>
-          {% if profile.bio %}
-          <p class="text-gray-500 dark:text-gray-400 text-sm truncate max-w-xs">{{ profile.bio }}</p>
+    <ul class="space-y-4 mt-6">
+      {% for profile in results %}
+        <li class="flex justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-2xl shadow hover:shadow-lg transition">
+          <a href="{% url 'profile' profile.user.id %}" class="flex items-center space-x-4">
+            {% if profile.profile_pic %}
+              <img src="{{ profile.profile_pic.url }}" alt="{{ profile.user.username }}" class="w-12 h-12 rounded-full object-cover ring-2 ring-blue-400"/>
+            {% else %}
+              <div class="w-12 h-12 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300 font-bold text-lg ring-2 ring-blue-400">{{ profile.user.username|first|upper }}</div>
+            {% endif %}
+            <div>
+              <p class="font-semibold text-gray-800 dark:text-gray-100 text-lg">{{ profile.user.username }}</p>
+              {% if profile.bio %}
+                <p class="text-gray-500 dark:text-gray-400 text-sm truncate max-w-xs">{{ profile.bio }}</p>
+              {% endif %}
+            </div>
+          </a>
+
+          {% if profile.user != request.user %}
+            {% if profile in request.user.profile.friends.all %}
+              <button class="px-4 py-2 rounded-xl bg-gray-400 text-white font-medium shadow-md cursor-not-allowed" disabled>Friends</button>
+            {% else %}
+              <form method="POST" action="{% url 'send_friend_request' profile.id %}">
+                {% csrf_token %}
+                <button type="submit" class="px-4 py-2 rounded-xl bg-green-500 hover:bg-green-600 text-white font-medium shadow-md transition text-sm">Add Friend</button>
+              </form>
+            {% endif %}
           {% endif %}
-        </div>
-      </a>
 
-      <!-- ➕ Add Friend / Friends Button -->
-      {% if profile.user != request.user %}
-        {% if profile.user in request.user.profile.friends.all %}
-          <button class="px-4 py-2 rounded-xl bg-gray-400 text-white font-medium shadow-md cursor-not-allowed">
-            Friends
-          </button>
-        {% else %}
-          <form method="POST" action="{% url 'send_friend_request' profile.id %}" class="w-full sm:w-auto">
-            {% csrf_token %}
-            <button type="submit" class="px-4 py-2 rounded-xl bg-green-500 hover:bg-green-600 text-white font-medium shadow-md transition text-sm w-full sm:w-auto">
-              Add Friend
-            </button>
-          </form>
-        {% endif %}
-      {% endif %}
-
-    </li>
-    {% endfor %}
-  </ul>
-
+        </li>
+      {% endfor %}
+    </ul>
   {% elif query %}
-  <!-- No Results -->
-  <p class="text-gray-500 dark:text-gray-400 text-center text-sm mt-6">
-    No users found for "<span class="font-medium">{{ query }}</span>".
-  </p>
+    <p class="text-gray-500 dark:text-gray-400 text-center text-sm mt-6">No users found for "<span class="font-medium">{{ query }}</span>".</p>
   {% endif %}
+
 </div>
 
 {% endblock %}
