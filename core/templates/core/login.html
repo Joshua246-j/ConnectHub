@@ -1,36 +1,40 @@
 {% extends "core/base_auth.html" %} {% load static %} {% block content %}
 
 <!-- Full-screen container -->
-<div class="flex w-screen h-screen overflow-hidden bg-blue">
-  <!-- Left Side: Logo & Tagline -->
+<div
+  class="flex flex-col md:flex-row w-screen h-screen overflow-hidden bg-blue"
+>
+  <!-- Left Side: Logo & Tagline (Hidden on small screens, shows nicely on larger) -->
   <div
     class="hidden md:flex md:w-1/2 flex-col justify-center bg-gradient-to-tr from-blue-800 to-indigo-600 p-8 md:p-16 h-full"
   >
     <h1
-      class="text-5xl md:text-6xl font-extrabold text-white mb-6 tracking-tight"
+      class="text-4xl md:text-6xl font-extrabold text-white mb-4 md:mb-6 tracking-tight"
       style="font-family: 'Poppins', sans-serif"
     >
       Connect Hub
     </h1>
-    <p class="text-lg md:text-xl text-white font-light mb-10 leading-relaxed">
+    <p
+      class="text-base md:text-xl text-white font-light mb-6 md:mb-10 leading-relaxed"
+    >
       Connect with friends, share moments, and experience life together.
     </p>
     <div class="space-y-3">
       <div class="flex items-center space-x-3">
         <div class="w-3 h-3 bg-white rounded-full"></div>
-        <span class="text-white font-medium text-sm md:text-base"
+        <span class="text-white text-sm md:text-base font-medium"
           >Share moments instantly</span
         >
       </div>
       <div class="flex items-center space-x-3">
         <div class="w-3 h-3 bg-white rounded-full"></div>
-        <span class="text-white font-medium text-sm md:text-base"
+        <span class="text-white text-sm md:text-base font-medium"
           >Follow friends & trends</span
         >
       </div>
       <div class="flex items-center space-x-3">
         <div class="w-3 h-3 bg-white rounded-full"></div>
-        <span class="text-white font-medium text-sm md:text-base"
+        <span class="text-white text-sm md:text-base font-medium"
           >Elegant, smooth interface</span
         >
       </div>
@@ -39,12 +43,14 @@
 
   <!-- Right Side: Login Form -->
   <div
-    class="flex w-full md:w-1/2 justify-center items-center bg-white p-6 md:p-12 h-full"
+    class="flex w-full md:w-1/2 justify-center items-center bg-white p-4 sm:p-6 md:p-12 h-full"
   >
     <div class="w-full max-w-md flex flex-col justify-center h-full">
       <!-- Heading -->
-      <div class="text-center mb-6 my-10">
-        <h2 class="text-3xl md:text-4xl font-semibold text-gray-700">
+      <div class="text-center mb-6 my-6 md:my-10">
+        <h2
+          class="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-700"
+        >
           Welcome Back
         </h2>
         <p class="text-gray-500 text-sm md:text-base mt-2">
@@ -55,12 +61,12 @@
       <!-- Form Errors -->
       {% if form.errors %}
       <div
-        class="bg-red-100 text-red-700 p-4 rounded-lg border border-red-200 mb-2"
+        class="bg-red-100 text-red-700 p-3 sm:p-4 rounded-lg border border-red-200 mb-4"
       >
         <ul class="list-disc list-inside text-sm">
-          {% for field in form %} {% for error in field.errors %}
+          {% for field in form %}{% for error in field.errors %}
           <li>{{ error }}</li>
-          {% endfor %} {% endfor %} {% for error in form.non_field_errors %}
+          {% endfor %}{% endfor %}{% for error in form.non_field_errors %}
           <li>{{ error }}</li>
           {% endfor %}
         </ul>
@@ -68,7 +74,10 @@
       {% endif %}
 
       <!-- Login Form -->
-      <form method="post" class="space-y-5 flex flex-col justify-center h-full">
+      <form
+        method="post"
+        class="space-y-4 sm:space-y-5 flex flex-col justify-center"
+      >
         {% csrf_token %}
 
         <!-- Username -->
@@ -83,7 +92,7 @@
             type="text"
             name="{{ form.username.html_name }}"
             id="{{ form.username.id_for_label }}"
-            class="mt-2 block w-full rounded-2xl border-2 border-gray-400 shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-300 focus:ring-opacity-50 p-4 text-gray-700 font-medium transition bg-white"
+            class="mt-2 block w-full rounded-xl border-2 border-gray-300 shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-300 focus:ring-opacity-50 p-3 sm:p-4 text-gray-700 font-medium transition bg-white"
           />
         </div>
 
@@ -99,21 +108,21 @@
             type="password"
             name="{{ form.password.html_name }}"
             id="{{ form.password.id_for_label }}"
-            class="mt-2 block w-full rounded-2xl border-2 border-gray-400 shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-300 focus:ring-opacity-50 p-4 text-gray-700 font-medium transition bg-white"
+            class="mt-2 block w-full rounded-xl border-2 border-gray-300 shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-300 focus:ring-opacity-50 p-3 sm:p-4 text-gray-700 font-medium transition bg-white"
           />
         </div>
 
         <!-- Submit Button -->
         <button
           type="submit"
-          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-bold text-lg shadow-lg transition-all duration-300 mt-auto"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 sm:py-4 rounded-xl font-bold text-lg shadow-lg transition-all duration-300"
         >
           Log In
         </button>
       </form>
 
       <!-- Signup Link -->
-      <p class="text-center text-gray-500 text-sm md:text-base mt-6">
+      <p class="text-center text-gray-500 text-sm md:text-base mt-4 md:mt-6">
         Don't have an account?
         <a
           href="{% url 'register' %}"
