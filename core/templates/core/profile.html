@@ -56,17 +56,39 @@
       </div>
     </div>
 
-    <!-- Edit Profile (only for own profile) -->
-    {% if request.user == profile.user %}
-      <div class="mt-4">
+    <!-- Buttons Section -->
+    <div class="mt-4 flex space-x-4">
+      <!-- Edit Profile (only for own profile) -->
+      {% if request.user == profile.user %}
         <a
           href="{% url 'edit_profile' %}"
           class="px-6 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md transition"
         >
           ✏️ Edit Profile
         </a>
-      </div>
-    {% endif %}
+      {% else %}
+        <!-- Add Friend / Friends (for others) -->
+        {% if profile.user in request.user.profile.friends.all %}
+          <button
+            class="px-6 py-2 rounded-full bg-gray-400 text-white font-semibold shadow-md cursor-not-allowed"
+            disabled
+          >
+            Friends
+          </button>
+        {% else %}
+          <form method="POST" action="{% url 'send_friend_request' profile.id %}">
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="px-6 py-2 rounded-full bg-green-500 hover:bg-green-600 text-white font-semibold shadow-md transition"
+            >
+              Add Friend
+            </button>
+          </form>
+        {% endif %}
+      {% endif %}
+    </div>
+
   </div>
 
   <!-- 📝 Posts Section -->
@@ -91,7 +113,6 @@
                   <img src="{{ media.file.url }}" class="w-full h-64 object-cover mb-2 rounded-t-2xl"/>
                 {% endif %}
               {% endfor %}
-
               <div class="p-4">
                 {% if post.caption %}
                   <p class="text-gray-800 dark:text-gray-100 text-base mb-2 break-words">
